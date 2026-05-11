@@ -756,8 +756,8 @@ function AboutDev() {
   const projects = [
     {
       name: 'ETE CGPA Calculator',
-      href: '#',
-      bio: 'A calculator project for ETE students. Add the final project link and a short description here.',
+      href: 'https://ratuuul.github.io/calcgpa',
+      bio: 'A CGPA calculator for RUET ETE students.',
     },
   ];
   return (
@@ -786,7 +786,7 @@ function AboutDev() {
             <div className="devTimeline">
               <span><b>Project</b> mETEoric 24 directory</span>
               <span><b>Role</b> Frontend development</span>
-              <span><b>Data</b> CSV to JSON roster</span>
+              <span><b>Data</b> - </span>
             </div>
           </article>
 
@@ -811,8 +811,7 @@ function AboutDev() {
           <article className="devNoteCard">
             <Code2 size={22} />
             <p>
-              Built as a static React site with searchable student data, blood group filters, success stories, theme
-              support, and mobile navigation.
+              Coming soon !
             </p>
             <b>{formatName(dev?.name || 'Hossain Mohammod Ratul')}</b>
             <small>Developer · mETEoric 24</small>
