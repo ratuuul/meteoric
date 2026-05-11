@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="description"
+      content="mETEoric 24 student directory with search, blood donor lookup, hometown filters, and CSV export."
+    />
+    <title>mETEoric 24 Directory</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="hero">
+        <nav class="topbar" aria-label="Primary">
+          <div class="brand">
+            <span class="brandMark">m</span>
+            <span>
+              <strong>mETEoric 24</strong>
+              <small>Student workspace</small>
+            </span>
+          </div>
+
+          <div class="desktopNav" role="tablist" aria-label="Views">
+            <button class="navItem active" data-view-button="directory" type="button">
+              <span data-icon="users"></span>
+              Roster
+            </button>
+            <button class="navItem" data-view-button="blood" type="button">
+              <span data-icon="droplet"></span>
+              Donors
+            </button>
+            <button class="navItem" data-view-button="insights" type="button">
+              <span data-icon="chart"></span>
+              Pulse
+            </button>
+          </div>
+
+          <div class="navActions">
+            <button class="navExport" id="nav-export" type="button">
+              <span data-icon="download"></span>
+              Export
+            </button>
+            <button class="iconButton" id="theme-toggle" type="button" aria-label="Toggle theme">
+              <span data-theme-icon></span>
+            </button>
+          </div>
+        </nav>
+
+        <section class="heroGrid">
+          <div class="heroCopy">
+            <p class="eyebrow">RUET ETE · Student directory</p>
+            <h1>A clean workspace for mETEoric 24.</h1>
+            <p>
+              Search names, nicknames, rolls, hometowns, and blood groups from one calm directory. Call, email, find
+              donors, and export the roster without opening the original form.
+            </p>
+            <div class="heroActions">
+              <a href="#directory" class="primaryCta" data-open-roster>Open roster</a>
+              <button class="secondaryCta" id="hero-export" type="button">
+                <span data-icon="download"></span>
+                Export CSV
+              </button>
+            </div>
+            <div class="proofStrip" aria-label="Directory summary">
+              <span><b data-total-students>0</b> students</span>
+              <span><b data-total-blood>0</b> blood groups</span>
+              <span><b data-total-hometowns>0</b> hometowns</span>
+            </div>
+          </div>
+
+          <div class="heroConsole" aria-label="Directory preview">
+            <div class="consoleHeader">
+              <span class="statusDot"></span>
+              <span>mETEoric 24 database</span>
+              <b data-visible-count>0</b>
+            </div>
+            <div class="consoleSearch">
+              <span data-icon="search"></span>
+              <span>Search “A+”, “Dhaka”, “2404”, or a nickname</span>
+            </div>
+            <div class="consoleStack" id="preview-list"></div>
+            <div class="consoleMetrics">
+              <span><span data-icon="heart"></span> Donor lookup</span>
+              <span><span data-icon="cap"></span> Export-ready</span>
+            </div>
+          </div>
+        </section>
+      </header>
+
+      <main id="directory" class="main">
+        <section class="commandCenter">
+          <label class="searchBox" for="student-search">
+            <span data-icon="search"></span>
+            <input id="student-search" placeholder="Search name, roll, nickname, hometown..." autocomplete="off" />
+            <button id="clear-search" type="button" aria-label="Clear search">
+              <span data-icon="x"></span>
+            </button>
+          </label>
+          <div class="filters">
+            <select id="blood-filter" aria-label="Filter by blood group"></select>
+            <select id="hometown-filter" aria-label="Filter by hometown"></select>
+            <button class="ghostButton" id="reset-filters" type="button">Reset</button>
+          </div>
+        </section>
+
+        <section class="directorySection viewSection active" data-view="directory">
+          <div class="sectionHead">
+            <div>
+              <p class="eyebrow">Roster</p>
+              <h2><span data-result-count>0</span> classmates match your search.</h2>
+            </div>
+            <button class="exportButton" id="section-export" type="button">
+              <span data-icon="download"></span>
+              Export
+            </button>
+          </div>
+
+          <div class="rosterShell">
+            <aside class="rosterAside">
+              <span class="asideIcon"><span data-icon="users"></span></span>
+              <h3>Directory view</h3>
+              <p>A Notion-style roster for quick lookup, donor filtering, and clean exports.</p>
+              <div class="asideStats">
+                <span><b data-aside-visible>0</b> visible</span>
+                <span><b data-aside-blood>All</b> blood</span>
+                <span><b data-aside-hometown>All</b> area</span>
+              </div>
+            </aside>
+            <div class="studentList" id="student-list"></div>
+          </div>
+
+          <div class="emptyState" id="empty-state" hidden>
+            <span data-icon="search"></span>
+            <h3>No match in the roster</h3>
+            <p>Try a shorter name, a roll prefix, a hometown, or a blood group.</p>
+            <button class="primaryCta" id="empty-reset" type="button">Show everyone again</button>
+          </div>
+        </section>
+
+        <section class="insightSection viewSection" data-view="blood">
+          <div class="sectionHead">
+            <div>
+              <p class="eyebrow">Donors</p>
+              <h2>Find the right blood group before panic starts.</h2>
+            </div>
+          </div>
+          <div class="bloodGrid" id="blood-grid"></div>
+        </section>
+
+        <section class="insightSection viewSection" data-view="insights">
+          <div class="sectionHead">
+            <div>
+              <p class="eyebrow">Pulse</p>
+              <h2>The batch, summarized without a spreadsheet.</h2>
+            </div>
+          </div>
+          <div class="statsLayout">
+            <div class="chartBlock">
+              <h3>Blood distribution</h3>
+              <div id="blood-chart"></div>
+            </div>
+            <div class="chartBlock">
+              <h3>Top hometowns</h3>
+              <div id="hometown-chart"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <div class="bottomNav" aria-label="Mobile navigation">
+        <button class="active" data-view-button="directory" type="button">
+          <span data-icon="users"></span>
+          <span>Roster</span>
+        </button>
+        <button data-view-button="blood" type="button">
+          <span data-icon="droplet"></span>
+          <span>Donors</span>
+        </button>
+        <button data-view-button="insights" type="button">
+          <span data-icon="chart"></span>
+          <span>Pulse</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="modalBackdrop" id="profile-modal" hidden>
+      <article class="profileModal">
+        <button class="closeButton" id="close-modal" type="button" aria-label="Close">
+          <span data-icon="x"></span>
+        </button>
+        <span class="avatar large" data-modal-initials></span>
+        <p class="eyebrow" data-modal-roll></p>
+        <h2 data-modal-name></h2>
+        <p class="modalNick" data-modal-nick></p>
+        <div class="modalFacts">
+          <span><span data-icon="droplet"></span> <span data-modal-blood></span></span>
+          <span><span data-icon="map"></span> <span data-modal-hometown></span></span>
+        </div>
+        <div class="modalActions">
+          <a data-modal-phone><span data-icon="phone"></span> <span data-modal-mobile></span></a>
+          <a data-modal-email><span data-icon="mail"></span> <span data-modal-email-text></span></a>
+        </div>
+      </article>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
