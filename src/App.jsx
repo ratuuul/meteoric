@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import {
   Activity,
@@ -20,8 +19,9 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import students from './data/students.json';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import signalPosts from './data/signalPosts.json';
+import students from './data/students.json';
 
 const normalize = (value) =>
   String(value ?? '')
@@ -285,7 +285,7 @@ export default function App() {
         <section className="heroGrid">
           <div className="heroCopy">
             <p className="eyebrow">RUET ETE · Batch 2024</p>
-            <h1>The class directory that actually keeps up.</h1>
+            <h1>The !family you never knew existed.</h1>
             <p>
               Find a batchmate by name, nickname, roll, hometown, or blood group. Open a richer profile, call in one
               tap, send an email, or export the exact list you need.
