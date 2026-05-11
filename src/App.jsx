@@ -781,7 +781,7 @@ function AboutDev() {
           <article className="devPortraitCard">
             <div className="devImageSlot">
               <Avatar className="devAvatar" image={dev?.image} name={dev?.name || 'Hossain Mohammod Ratul'} />
-              <span>Add image link in students.json</span>
+              <span>Image will be added later</span>
             </div>
             <div className="devTimeline">
               <span><b>Project</b> mETEoric 24 directory</span>
@@ -811,7 +811,7 @@ function AboutDev() {
           <article className="devNoteCard">
             <Code2 size={22} />
             <p>
-              Built as a static React site with searchable student data, blood group filters, signal posts, theme
+              Built as a static React site with searchable student data, blood group filters, success stories, theme
               support, and mobile navigation.
             </p>
             <b>{formatName(dev?.name || 'Hossain Mohammod Ratul')}</b>
