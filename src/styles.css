@@ -94,18 +94,11 @@ a {
 
 .app {
   min-height: 100vh;
-  padding-bottom: 84px;
   background: var(--page);
 }
 
 .hero {
-  padding: 16px 24px 72px;
-  background: var(--page);
-}
-
-.plainHeader {
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--line);
+  padding: 92px 24px 72px;
   background: var(--page);
 }
 
@@ -117,6 +110,32 @@ a {
   max-width: 1180px;
   min-height: 58px;
   margin: 0 auto;
+}
+
+@media (min-width: 1001px) {
+  .topbar {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    z-index: 80;
+    width: min(1180px, calc(100% - 48px));
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--page) 86%, transparent);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(18px);
+    transform: translateX(-50%);
+  }
+
+  .hero,
+  .main {
+    padding-top: 92px;
+  }
+
+  .hero + .main {
+    padding-top: 0;
+  }
 }
 
 .brand,
@@ -711,13 +730,26 @@ a {
 
 .filters select {
   min-height: 46px;
-  min-width: 118px;
+  min-width: auto;
   border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 0 10px;
-  background: var(--card);
+  padding: 0 30px 0 12px;
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--text-soft) 50%) right 13px center / 6px 6px no-repeat,
+    linear-gradient(135deg, color-mix(in srgb, var(--blue) 5%, transparent), transparent 60%),
+    var(--card);
   color: var(--text);
-  font-weight: 500;
+  font-weight: 750;
+}
+
+.bloodFilter {
+  width: 92px;
+}
+
+.hometownFilter {
+  width: 220px;
+  max-width: 28vw;
 }
 
 :root[data-theme="dark"] .filters select {
@@ -1443,6 +1475,18 @@ a {
   height: 78px;
 }
 
+.profileImageButton {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: zoom-in;
+}
+
+.profileImageButton:disabled {
+  cursor: default;
+}
+
 .largeCrown {
   top: -6px;
   right: -5px;
@@ -1458,10 +1502,27 @@ a {
 }
 
 .profileButton small {
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
   margin-top: 3px;
   color: var(--text-soft);
   font-size: 0.84rem;
+}
+
+.rollPill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 7px;
+  border-radius: 9999px;
+  background: var(--blue-soft);
+  color: var(--blue-text);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .metaRows {
@@ -1995,6 +2056,17 @@ a {
   margin: 0 auto;
 }
 
+.profileZoomFrame {
+  display: grid;
+  place-items: center;
+}
+
+.profileZoomFrame img {
+  max-width: min(92vw, 720px);
+  max-height: 88vh;
+  object-fit: contain;
+}
+
 .imageZoomClose {
   position: fixed;
   top: 18px;
@@ -2297,6 +2369,62 @@ a {
   letter-spacing: 0;
 }
 
+.bloodChartBlock {
+  align-self: start;
+}
+
+.bloodChartBlock .barRow {
+  margin: 8px 0;
+}
+
+.bloodChartBlock .barRow div {
+  height: 7px;
+}
+
+.chartTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.chartTitleRow h3 {
+  margin: 0;
+}
+
+.chartTitleRow span {
+  padding: 4px 8px;
+  border-radius: 9999px;
+  background: var(--blue-soft);
+  color: var(--blue-text);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.districtChartBlock {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--blue) 8%, transparent), transparent 62%),
+    var(--card);
+}
+
+.districtBars {
+  display: grid;
+  max-height: 430px;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-width: thin;
+}
+
+.districtBars::-webkit-scrollbar {
+  width: 8px;
+}
+
+.districtBars::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--blue) 34%, var(--line));
+}
+
 .barRow {
   display: grid;
   grid-template-columns: minmax(82px, 158px) minmax(0, 1fr) 34px;
@@ -2433,6 +2561,44 @@ a {
   color: var(--blue-text);
 }
 
+.siteFooter {
+  padding: 18px 24px 20px;
+  background: var(--page-alt);
+}
+
+.footerInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.footerInner > div {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 2px 12px;
+  align-items: center;
+}
+
+.footerInner .brandMark {
+  grid-row: span 2;
+}
+
+.footerInner strong {
+  font-size: 1rem;
+}
+
+.footerInner p,
+.footerInner small {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
 .modalBackdrop {
   position: fixed;
   inset: 0;
@@ -2500,6 +2666,10 @@ a {
 }
 
 .modalNick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
   margin: 0 0 18px;
   color: var(--text-soft);
 }
@@ -2765,6 +2935,16 @@ a {
   .devPortraitCard {
     min-height: 420px;
   }
+
+  .footerInner {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footerInner > div {
+    justify-self: center;
+    text-align: left;
+  }
 }
 
 @media (max-width: 680px) {
@@ -2773,12 +2953,8 @@ a {
     overflow-x: hidden;
   }
 
-  .app {
-    padding-bottom: 96px;
-  }
-
   .hero {
-    padding: 10px 14px 48px;
+    padding: 76px 14px 48px;
   }
 
   .topbar {
@@ -2854,10 +3030,11 @@ a {
     grid-column: 2 / 3;
     width: 100%;
     min-width: auto;
-    padding-inline: 6px;
+    padding: 0 22px 0 8px;
     font-weight: 800;
     text-align: center;
     background:
+      linear-gradient(45deg, transparent 50%, var(--blue-text) 50%) right 9px center / 6px 6px no-repeat,
       linear-gradient(135deg, color-mix(in srgb, var(--blue) 8%, transparent), transparent 58%),
       var(--card);
     color: var(--text);
@@ -3090,6 +3267,14 @@ a {
   .bottomNav button {
     min-height: 52px;
     font-size: 0.64rem;
+  }
+
+  .siteFooter {
+    padding: 16px 14px 92px;
+  }
+
+  .footerInner {
+    padding-top: 14px;
   }
 }
 
