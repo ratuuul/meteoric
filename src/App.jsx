@@ -45,12 +45,34 @@ const districtAliases = {
   'mirpur dhaka': 'Dhaka',
   'nator': 'Natore',
   'natore(mainly live in dhaka)': 'Natore',
-  'saidpur, nilphamari': 'Nilphamari',
-  'naogaon district, mohadevpur thana': 'Naogaon',
-  'digholia, pairahat,abhaynagar, jashore.': 'Jashore',
-  'rohanpur, chapainawabgonj': 'Chapainawabganj',
+  'saidpur nilphamari': 'Nilphamari',
+  'naogaon district mohadevpur thana': 'Naogaon',
+  'digholia pairahat abhaynagar jashore': 'Jashore',
+  'rohanpur chapainawabgonj': 'Chapainawabganj',
   'মাগুরা': 'Magura',
 };
+
+const districtKeywords = [
+  ['chapainawabgonj', 'Chapainawabganj'],
+  ['chapainawabganj', 'Chapainawabganj'],
+  ['chittagong', 'Chattogram'],
+  ['chattagram', 'Chattogram'],
+  ['chattogram', 'Chattogram'],
+  ['nilphamari', 'Nilphamari'],
+  ['naogaon', 'Naogaon'],
+  ['jashore', 'Jashore'],
+  ['dhaka', 'Dhaka'],
+  ['natore', 'Natore'],
+  ['magura', 'Magura'],
+  ['bogura', 'Bogura'],
+  ['cumilla', 'Cumilla'],
+  ['dinajpur', 'Dinajpur'],
+  ['gazipur', 'Gazipur'],
+  ['khulna', 'Khulna'],
+  ['pabna', 'Pabna'],
+  ['rangpur', 'Rangpur'],
+  ['tangail', 'Tangail'],
+];
 
 function isCr(student) {
   return (
@@ -90,7 +112,8 @@ function districtName(value) {
   const raw = String(value || '').trim().replace(/\s+/g, ' ');
   if (!raw) return 'Unknown';
   const key = normalize(raw).replace(/[,.]+/g, ' ').replace(/\s+/g, ' ').trim();
-  return districtAliases[key] || formatName(raw.replace(/[,.]+$/g, ''));
+  const keywordMatch = districtKeywords.find(([keyword]) => key.includes(keyword));
+  return districtAliases[key] || keywordMatch?.[1] || formatName(raw.replace(/[,.]+$/g, ''));
 }
 
 function buildCrProfiles() {
@@ -592,12 +615,12 @@ function StudentCard({ student, index, onSelect }) {
           {cr && <span className="crownBadge"><Crown size={13} /></span>}
         </span>
         <span>
-          <strong>
-            {formatName(student.name)}
+          <strong className="studentNameLine">
+            <span>{formatName(student.name)}</span>
             {cr && <em className="crTag">CR</em>}
           </strong>
-          <small>
-            {student.nickname || 'mETEoric 24'}
+          <small className="studentSubline">
+            <span>{student.nickname || 'mETEoric 24'}</span>
             <em className="rollPill">{student.roll}</em>
           </small>
         </span>
