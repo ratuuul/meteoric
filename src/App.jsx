@@ -1027,8 +1027,19 @@ function SignalPostPage({ post, onBack }) {
         </footer>
       </article>
       {zoomedImage && (
-        <div className="imageZoomBackdrop" onMouseDown={() => setZoomedImage(false)}>
-          <button className="imageZoomClose" onClick={() => setZoomedImage(false)} type="button">
+        <div
+          className="imageZoomBackdrop"
+          onMouseDown={(event) => {
+            event.stopPropagation();
+            setZoomedImage(false);
+          }}
+        >
+          <button
+            className="imageZoomClose"
+            onMouseDown={(event) => event.stopPropagation()}
+            onClick={() => setZoomedImage(false)}
+            type="button"
+          >
             <X size={20} />
             <span className="srOnly">Close image</span>
           </button>
@@ -1058,7 +1069,16 @@ function ProfileModal({ student, onClose }) {
   const cr = isCr(student);
   const [zoomedImage, setZoomedImage] = useState(false);
   return (
-    <div className="modalBackdrop" onMouseDown={onClose}>
+    <div
+      className="modalBackdrop"
+      onMouseDown={(event) => {
+        if (zoomedImage) {
+          event.stopPropagation();
+          return;
+        }
+        onClose();
+      }}
+    >
       <article className="profileModal" onMouseDown={(event) => event.stopPropagation()}>
         <button className="closeButton" onClick={onClose} type="button">
           <X size={20} />
@@ -1118,8 +1138,22 @@ function ProfileModal({ student, onClose }) {
         </div>
       </article>
       {zoomedImage && (
-        <div className="imageZoomBackdrop" onMouseDown={() => setZoomedImage(false)}>
-          <button className="imageZoomClose" onClick={() => setZoomedImage(false)} type="button">
+        <div
+          className="imageZoomBackdrop"
+          onMouseDown={(event) => {
+            event.stopPropagation();
+            setZoomedImage(false);
+          }}
+        >
+          <button
+            className="imageZoomClose"
+            onMouseDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              setZoomedImage(false);
+            }}
+            type="button"
+          >
             <X size={20} />
             <span className="srOnly">Close image</span>
           </button>
