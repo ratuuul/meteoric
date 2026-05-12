@@ -57,6 +57,18 @@ function formatName(value) {
     .replace(/\b[A-Za-z][A-Za-z']*/g, (word) => word.charAt(0).toUpperCase() + word.slice(1));
 }
 
+function fuzzyIncludes(field, query) {
+  if (!query) return true;
+  if (field.includes(query)) return true;
+  if (query.length < 3) return false;
+  let queryIndex = 0;
+  for (const char of field) {
+    if (char === query[queryIndex]) queryIndex += 1;
+    if (queryIndex === query.length) return true;
+  }
+  return false;
+}
+
 function buildCrProfiles() {
   const ahnaf = students.find((student) => isCr(student));
   const abuRayan = students.find((student) => normalize(student.name).includes('jourder abu rayan'));
@@ -232,7 +244,7 @@ export default function App() {
         !q ||
         [student.name, student.nickname, student.roll, student.mobile, student.email, student.hometown, student.blood]
           .map(normalize)
-          .some((field) => field.includes(q));
+          .some((field) => fuzzyIncludes(field.replace(/\s+/g, ''), q.replace(/\s+/g, '')));
       const matchesBlood = blood === 'All' || student.blood === blood;
       const matchesHometown = hometown === 'All' || student.hometown === hometown;
       return matchesQuery && matchesBlood && matchesHometown;
@@ -365,14 +377,14 @@ export default function App() {
                   )}
                 </label>
                 <div className="filters">
-                  <select value={blood} onChange={(event) => setBlood(event.target.value)} aria-label="Filter by blood group">
+                  <select className="bloodFilter" value={blood} onChange={(event) => setBlood(event.target.value)} aria-label="Filter by blood group">
                     {bloodOrder
                       .filter((item) => item === 'All' || stats.bloodCounts[item])
                       .map((item) => (
                         <option key={item}>{item}</option>
                       ))}
                   </select>
-                  <select value={hometown} onChange={(event) => setHometown(event.target.value)} aria-label="Filter by hometown">
+                  <select className="hometownFilter" value={hometown} onChange={(event) => setHometown(event.target.value)} aria-label="Filter by hometown">
                     {hometowns.map((item) => (
                       <option key={item}>{item}</option>
                     ))}
@@ -407,13 +419,16 @@ export default function App() {
                     <span><b>{hometown}</b> area</span>
                   </div>
                 </aside>
-                <div className="studentList">
-                {filtered.map((student, index) => (
-                  <StudentCard key={student.roll} student={student} index={index} onSelect={() => setSelected(student)} />
-                ))}
+                <div className={filtered.length ? 'studentList' : 'studentList emptyList'}>
+                  {filtered.length ? (
+                    filtered.map((student, index) => (
+                      <StudentCard key={student.roll} student={student} index={index} onSelect={() => setSelected(student)} />
+                    ))
+                  ) : (
+                    <EmptyState onReset={resetFilters} />
+                  )}
                 </div>
               </div>
-              {!filtered.length && <EmptyState onReset={resetFilters} />}
             </section>
           </>
         )}
