@@ -39,8 +39,25 @@ const tabs = [
   { id: 'dev', label: 'Dev', icon: Code2 },
 ];
 
+const districtAliases = {
+  chattagram: 'Chattogram',
+  chittagong: 'Chattogram',
+  'mirpur dhaka': 'Dhaka',
+  'nator': 'Natore',
+  'natore(mainly live in dhaka)': 'Natore',
+  'saidpur, nilphamari': 'Nilphamari',
+  'naogaon district, mohadevpur thana': 'Naogaon',
+  'digholia, pairahat,abhaynagar, jashore.': 'Jashore',
+  'rohanpur, chapainawabgonj': 'Chapainawabganj',
+  'মাগুরা': 'Magura',
+};
+
 function isCr(student) {
-  return normalize(student.name).includes('ahnaf muttaqui anuprov') || normalize(student.nickname).includes('anuprov');
+  return (
+    normalize(student.name).includes('ahnaf muttaqui anuprov') ||
+    normalize(student.nickname).includes('anuprov') ||
+    String(student.roll) === '2404056'
+  );
 }
 
 function hasBangla(value) {
@@ -67,6 +84,13 @@ function fuzzyIncludes(field, query) {
     if (queryIndex === query.length) return true;
   }
   return false;
+}
+
+function districtName(value) {
+  const raw = String(value || '').trim().replace(/\s+/g, ' ');
+  if (!raw) return 'Unknown';
+  const key = normalize(raw).replace(/[,.]+/g, ' ').replace(/\s+/g, ' ').trim();
+  return districtAliases[key] || formatName(raw.replace(/[,.]+$/g, ''));
 }
 
 function buildCrProfiles() {
@@ -157,7 +181,6 @@ export default function App() {
     const mm = gsap.matchMedia();
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       const ctx = gsap.context(() => {
-        gsap.from('.topbar', { y: -18, opacity: 0, duration: 0.7, ease: 'power3.out' });
         gsap.from('.heroCopy > *', {
           y: 22,
           opacity: 0,
@@ -232,10 +255,10 @@ export default function App() {
     });
   };
 
-  const hometowns = useMemo(
-    () => ['All', ...Array.from(new Set(students.map((student) => student.hometown).filter(Boolean))).sort()],
-    [],
-  );
+  const hometowns = useMemo(() => {
+    const districts = Array.from(new Set(students.map((student) => districtName(student.hometown)).filter(Boolean)));
+    return ['All', ...districts.sort((a, b) => a.localeCompare(b))];
+  }, []);
 
   const filtered = useMemo(() => {
     const q = normalize(query);
@@ -246,7 +269,7 @@ export default function App() {
           .map(normalize)
           .some((field) => fuzzyIncludes(field.replace(/\s+/g, ''), q.replace(/\s+/g, '')));
       const matchesBlood = blood === 'All' || student.blood === blood;
-      const matchesHometown = hometown === 'All' || student.hometown === hometown;
+      const matchesHometown = hometown === 'All' || districtName(student.hometown) === hometown;
       return matchesQuery && matchesBlood && matchesHometown;
     });
   }, [query, blood, hometown]);
@@ -256,14 +279,15 @@ export default function App() {
       acc[student.blood || 'Unknown'] = (acc[student.blood || 'Unknown'] ?? 0) + 1;
       return acc;
     }, {});
-    const hometownCounts = students.reduce((acc, student) => {
-      acc[student.hometown || 'Unknown'] = (acc[student.hometown || 'Unknown'] ?? 0) + 1;
+    const districtCounts = students.reduce((acc, student) => {
+      const district = districtName(student.hometown);
+      acc[district] = (acc[district] ?? 0) + 1;
       return acc;
     }, {});
-    const topHometowns = Object.entries(hometownCounts)
+    const districtEntries = Object.entries(districtCounts)
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .slice(0, 6);
-    return { bloodCounts, topHometowns };
+    const topHometowns = districtEntries.slice(0, 6);
+    return { bloodCounts, districtEntries, topHometowns };
   }, []);
 
   const resetFilters = () => {
@@ -286,14 +310,10 @@ export default function App() {
 
   return (
     <div className="app">
-      {activeTab === 'dev' ? (
-        <header className="plainHeader">
-          <TopNav activeTab={activeTab} setTheme={setTheme} switchTab={switchTab} theme={theme} />
-        </header>
-      ) : (
-        <header className="hero">
-          <TopNav activeTab={activeTab} setTheme={setTheme} switchTab={switchTab} theme={theme} />
+      <TopNav activeTab={activeTab} setTheme={setTheme} switchTab={switchTab} theme={theme} />
 
+      {activeTab !== 'dev' && (
+        <header className="hero">
         <section className="heroGrid">
           <div className="heroCopy">
             <p className="eyebrow">RUET ETE · Batch 2024</p>
@@ -444,6 +464,8 @@ export default function App() {
         {activeTab === 'dev' && <AboutDev />}
       </main>
 
+      <SiteFooter />
+
       <div className="bottomNav" aria-label="Mobile navigation">
         {tabs.map((tab) => (
           <button
@@ -461,6 +483,21 @@ export default function App() {
       {selected && <ProfileModal student={selected} onClose={() => setSelected(null)} />}
       {showPhaseAlert && !loading && <PhaseAlert onClose={() => setShowPhaseAlert(false)} />}
     </div>
+  );
+}
+
+function SiteFooter() {
+  return (
+    <footer className="siteFooter">
+      <div className="footerInner">
+        <div>
+          <span className="brandMark">m</span>
+          <strong>mETEoric 24</strong>
+          <p>RUET ETE batch directory, donor lookup, pulse dashboard, and Signals board.</p>
+        </div>
+        <small>Built for the batch. Static, fast, and deploy-ready.</small>
+      </div>
+    </footer>
   );
 }
 
@@ -559,7 +596,10 @@ function StudentCard({ student, index, onSelect }) {
             {formatName(student.name)}
             {cr && <em className="crTag">CR</em>}
           </strong>
-          <small>{student.nickname || 'mETEoric 24'}</small>
+          <small>
+            {student.nickname || 'mETEoric 24'}
+            <em className="rollPill">{student.roll}</em>
+          </small>
         </span>
       </button>
       <div className="metaRows">
@@ -583,10 +623,16 @@ function StudentCard({ student, index, onSelect }) {
 }
 
 function Avatar({ className = '', image, name }) {
+  const [imageFailed, setImageFailed] = useState(false);
   const label = `${name || 'Student'} image`;
+  const showImage = image && !imageFailed;
   return (
     <span className={`avatar ${className}`.trim()}>
-      {image ? <img src={image} alt={label} loading="lazy" /> : <span>{initials(name || 'Student')}</span>}
+      {showImage ? (
+        <img src={image} alt={label} loading="lazy" onError={() => setImageFailed(true)} />
+      ) : (
+        <span>{initials(name || 'Student')}</span>
+      )}
     </span>
   );
 }
@@ -709,8 +755,9 @@ function PhaseAlert({ onClose }) {
 }
 
 function Insights({ stats }) {
-  const maxTown = Math.max(...stats.topHometowns.map(([, count]) => count));
+  const maxTown = Math.max(...stats.districtEntries.map(([, count]) => count));
   const bloodGroups = Object.keys(stats.bloodCounts).length;
+  const maxBlood = Math.max(...Object.values(stats.bloodCounts));
   return (
     <section className="insightSection">
       <div className="sectionHead">
@@ -737,21 +784,28 @@ function Insights({ stats }) {
         </article>
       </div>
       <div className="statsLayout">
-        <div className="chartBlock">
+        <div className="chartBlock bloodChartBlock">
           <h3>Blood distribution</h3>
-          {Object.entries(stats.bloodCounts).map(([group, count]) => (
+          {Object.entries(stats.bloodCounts)
+            .filter(([group]) => normalize(group) !== 'unknown')
+            .sort((a, b) => bloodOrder.indexOf(a[0]) - bloodOrder.indexOf(b[0]))
+            .map(([group, count]) => (
             <div className="barRow" key={group}>
               <span>{group}</span>
               <div>
-                <i style={{ width: `${(count / students.length) * 100}%` }} />
+                <i style={{ width: `${(count / maxBlood) * 100}%` }} />
               </div>
               <b>{count}</b>
             </div>
           ))}
         </div>
-        <div className="chartBlock">
-          <h3>Top hometowns</h3>
-          {stats.topHometowns.map(([town, count]) => (
+        <div className="chartBlock districtChartBlock">
+          <div className="chartTitleRow">
+            <h3>District distribution</h3>
+            <span>{stats.districtEntries.length} districts</span>
+          </div>
+          <div className="districtBars">
+          {stats.districtEntries.map(([town, count]) => (
             <div className="barRow" key={town}>
               <span>{town}</span>
               <div>
@@ -760,6 +814,7 @@ function Insights({ stats }) {
               <b>{count}</b>
             </div>
           ))}
+          </div>
         </div>
       </div>
     </section>
@@ -978,6 +1033,7 @@ function EmptyState({ onReset }) {
 
 function ProfileModal({ student, onClose }) {
   const cr = isCr(student);
+  const [zoomedImage, setZoomedImage] = useState(false);
   return (
     <div className="modalBackdrop" onMouseDown={onClose}>
       <article className="profileModal" onMouseDown={(event) => event.stopPropagation()}>
@@ -986,17 +1042,25 @@ function ProfileModal({ student, onClose }) {
           <span className="srOnly">Close</span>
         </button>
         <div className="profileHero">
-          <span className="avatarShell largeShell">
+          <button
+            className="avatarShell largeShell profileImageButton"
+            onClick={() => student.image && setZoomedImage(true)}
+            type="button"
+            disabled={!student.image}
+          >
             <Avatar className="large" name={student.name} image={student.image} />
             {cr && <span className="crownBadge largeCrown"><Crown size={16} /></span>}
-          </span>
+          </button>
           <div>
-            <p className="eyebrow">Roll {student.roll}</p>
+            <p className="eyebrow">Student profile</p>
             <h2>
               {formatName(student.name)}
               {cr && <em className="crTag">CR</em>}
             </h2>
-            <p className="modalNick">{student.nickname || 'mETEoric 24'}</p>
+            <p className="modalNick">
+              {student.nickname || 'mETEoric 24'}
+              <em className="rollPill">{student.roll}</em>
+            </p>
           </div>
         </div>
         <div className="profileFactGrid">
@@ -1030,6 +1094,17 @@ function ProfileModal({ student, onClose }) {
           </a>
         </div>
       </article>
+      {zoomedImage && (
+        <div className="imageZoomBackdrop" onMouseDown={() => setZoomedImage(false)}>
+          <button className="imageZoomClose" onClick={() => setZoomedImage(false)} type="button">
+            <X size={20} />
+            <span className="srOnly">Close image</span>
+          </button>
+          <div className="imageZoomFrame profileZoomFrame" onMouseDown={(event) => event.stopPropagation()}>
+            <img src={student.image} alt={`${formatName(student.name)} full size`} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
