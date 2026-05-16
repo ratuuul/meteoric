@@ -705,13 +705,11 @@ function BloodSection({ stats, setBlood, switchTab }) {
         </article>
       </div>
       <div className="bloodGrid">
-        {groups.map(([group, count], index) => (
+        {groups.map(([group, count]) => (
             <button
               className={[
                 'bloodTile',
                 selectedGroup === group ? 'active' : '',
-                index % 5 === 0 ? 'wide' : '',
-                index % 7 === 0 ? 'tall' : '',
               ].filter(Boolean).join(' ')}
               key={group}
               onClick={() => setSelectedGroup(group)}
@@ -735,7 +733,7 @@ function BloodSection({ stats, setBlood, switchTab }) {
           <div className="donorRows">
             {selectedDonors.map((student) => (
               <div className="donorRow" key={student.roll}>
-                <span className="miniAvatar">{initials(student.name)}</span>
+                <Avatar className="donorAvatar" image={student.image} name={student.name} />
                 <div>
                   <b>{formatName(student.name)}</b>
                   <small>{student.roll} · {student.hometown || 'Hometown unknown'}</small>
@@ -852,6 +850,11 @@ function AboutDev() {
       href: 'https://ratuuul.github.io/calcgpa',
       bio: 'A CGPA calculator for RUET ETE students.',
     },
+    {
+      name: 'Portfolio Site',
+      href: 'https://ratul.pro.bd',
+      bio: 'Personal portfolio site with projects, profile, and contact details.',
+    },
   ];
   return (
     <section id="about-dev" className="devSection">
@@ -916,7 +919,12 @@ function AboutDev() {
               <h3>Contact and updates</h3>
             </div>
             <div className="devContactPills">
-              {dev?.email && <a href={`mailto:${dev.email}`}><Mail size={15} /> {dev.email}</a>}
+              {dev?.email && (
+                <a href={`mailto:${dev.email}`}>
+                  <Mail size={15} />
+                  <span>{dev.email}</span>
+                </a>
+              )}
             </div>
           </article>
         </div>
