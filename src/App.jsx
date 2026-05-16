@@ -153,10 +153,11 @@ export default function App() {
   const [hometown, setHometown] = useState('All');
   const [activeTab, setActiveTab] = useState('directory');
   const [selected, setSelected] = useState(null);
+  const [zoomedDonor, setZoomedDonor] = useState(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem('ete-theme') ?? 'light');
   const [loading, setLoading] = useState(true);
-  const [showPhaseAlert, setShowPhaseAlert] = useState(true);
+  const [showPhaseAlert, setShowPhaseAlert] = useState(() => localStorage.getItem('meteoric-phase-alert-seen') !== 'true');
   const heroConsoleRef = useRef(null);
   const crProfiles = useMemo(() => buildCrProfiles(), []);
 
@@ -172,7 +173,10 @@ export default function App() {
 
   useEffect(() => {
     if (loading || !showPhaseAlert) return undefined;
-    const timer = window.setTimeout(() => setShowPhaseAlert(false), 7000);
+    const timer = window.setTimeout(() => {
+      localStorage.setItem('meteoric-phase-alert-seen', 'true');
+      setShowPhaseAlert(false);
+    }, 7000);
     return () => window.clearTimeout(timer);
   }, [loading, showPhaseAlert]);
 
@@ -477,7 +481,7 @@ export default function App() {
         )}
 
         {activeTab === 'blood' && (
-          <BloodSection stats={stats} setBlood={setBlood} switchTab={switchTab} />
+          <BloodSection stats={stats} setBlood={setBlood} switchTab={switchTab} onZoomDonor={setZoomedDonor} />
         )}
 
         {activeTab === 'insights' && <Insights stats={stats} />}
@@ -504,7 +508,15 @@ export default function App() {
       </div>
 
       {selected && <ProfileModal student={selected} onClose={() => setSelected(null)} />}
-      {showPhaseAlert && !loading && <PhaseAlert onClose={() => setShowPhaseAlert(false)} />}
+      {zoomedDonor && <ImageZoomOverlay student={zoomedDonor} onClose={() => setZoomedDonor(null)} />}
+      {showPhaseAlert && !loading && (
+        <PhaseAlert
+          onClose={() => {
+            localStorage.setItem('meteoric-phase-alert-seen', 'true');
+            setShowPhaseAlert(false);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -527,13 +539,13 @@ function SiteFooter() {
 function TopNav({ activeTab, setTheme, switchTab, theme }) {
   return (
     <nav className="topbar" aria-label="Primary">
-      <div className="brand">
+      <button className="brand brandButton" onClick={() => switchTab('directory')} type="button">
         <span className="brandMark">m</span>
         <span>
           <strong>mETEoric 24</strong>
           <small>Batch signal hub</small>
         </span>
-      </div>
+      </button>
       <div className="desktopNav">
         {tabs.map((tab) => (
           <button
@@ -660,7 +672,7 @@ function Avatar({ className = '', image, name }) {
   );
 }
 
-function BloodSection({ stats, setBlood, switchTab }) {
+function BloodSection({ stats, setBlood, switchTab, onZoomDonor }) {
   const groups = Object.entries(stats.bloodCounts)
     .filter(([group]) => normalize(group) !== 'unknown')
     .sort((a, b) => bloodOrder.indexOf(a[0]) - bloodOrder.indexOf(b[0]));
@@ -733,7 +745,14 @@ function BloodSection({ stats, setBlood, switchTab }) {
           <div className="donorRows">
             {selectedDonors.map((student) => (
               <div className="donorRow" key={student.roll}>
-                <Avatar className="donorAvatar" image={student.image} name={student.name} />
+                <button
+                  className="donorAvatarButton"
+                  onClick={() => student.image && onZoomDonor(student)}
+                  type="button"
+                  disabled={!student.image}
+                >
+                  <Avatar className="donorAvatar" image={student.image} name={student.name} />
+                </button>
                 <div>
                   <b>{formatName(student.name)}</b>
                   <small>{student.roll} · {student.hometown || 'Hometown unknown'}</small>
@@ -1170,6 +1189,25 @@ function ProfileModal({ student, onClose }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function ImageZoomOverlay({ student, onClose }) {
+  return (
+    <div className="imageZoomBackdrop" onMouseDown={onClose}>
+      <button
+        className="imageZoomClose"
+        onMouseDown={(event) => event.stopPropagation()}
+        onClick={onClose}
+        type="button"
+      >
+        <X size={20} />
+        <span className="srOnly">Close image</span>
+      </button>
+      <div className="imageZoomFrame profileZoomFrame" onMouseDown={(event) => event.stopPropagation()}>
+        <img src={student.image} alt={`${formatName(student.name)} full size`} />
+      </div>
     </div>
   );
 }

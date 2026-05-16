@@ -164,6 +164,24 @@ a {
   min-width: 0;
 }
 
+.brandButton {
+  justify-self: start;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  appearance: none;
+  cursor: pointer;
+}
+
+.brandButton:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
 .brandMark {
   display: grid;
   place-items: center;
@@ -1078,6 +1096,8 @@ a {
 }
 
 .crIntro {
+  display: grid;
+  align-content: center;
   padding: 18px;
   background:
     linear-gradient(
@@ -1089,6 +1109,7 @@ a {
 }
 
 .crIntro h2 {
+  max-width: none;
   margin: 12px 0 8px;
   font-size: 1.8rem;
   line-height: 1;
@@ -1096,6 +1117,7 @@ a {
 }
 
 .crIntro p {
+  max-width: none;
   margin: 0;
   color: var(--text-soft);
   line-height: 1.55;
@@ -1110,10 +1132,11 @@ a {
 .crCard {
   position: relative;
   display: grid;
-  align-content: space-between;
+  grid-template-rows: auto auto;
+  align-content: center;
   gap: 12px;
-  min-height: 132px;
-  padding: 16px;
+  min-height: 0;
+  padding: 12px 16px 16px;
   overflow: hidden;
 }
 
@@ -1139,7 +1162,7 @@ a {
   display: grid;
   place-items: center;
   align-self: center;
-  margin-top: 25px;
+  margin-top: 18px;
 }
 
 .crAvatar {
@@ -1194,7 +1217,7 @@ a {
   font-size: 1.12rem;
   line-height: 1.15;
   letter-spacing: 0;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
 .crCard p {
@@ -1216,7 +1239,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 7px;
-  min-height: 36px;
+  min-height: 34px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--page-alt);
@@ -2930,14 +2953,6 @@ a {
 
   .topbar {
     grid-template-columns: 1fr auto;
-    width: 100%;
-    min-width: 0;
-    gap: 12px;
-    padding: 8px;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: color-mix(in srgb, var(--page) 92%, transparent);
-    box-shadow: var(--shadow-card);
   }
 
   .heroGrid,
@@ -3200,6 +3215,7 @@ a {
   .crCard h3 {
     margin-top: 6px;
     font-size: 1.05rem;
+    white-space: normal;
   }
 
   .crCard p {
@@ -3349,21 +3365,6 @@ a {
 }
 
 @media (max-width: 430px) {
-  .topbar {
-    gap: 8px;
-    padding: 7px;
-  }
-
-  .brand {
-    gap: 8px;
-  }
-
-  .brandMark {
-    width: 32px;
-    height: 32px;
-    font-size: 1rem;
-  }
-
   .brand strong {
     font-size: 0.9rem;
   }
