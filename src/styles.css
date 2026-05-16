@@ -35,17 +35,24 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #191918;
-  --page-alt: #242321;
-  --text: rgba(255, 255, 255, 0.94);
-  --text-soft: rgba(255, 255, 255, 0.68);
-  --text-faint: rgba(255, 255, 255, 0.44);
-  --card: #20201f;
-  --line: rgba(255, 255, 255, 0.12);
-  --line-strong: rgba(255, 255, 255, 0.2);
-  --blue-soft: rgba(0, 117, 222, 0.14);
-  --shadow-card: rgba(0, 0, 0, 0.18) 0 4px 18px, rgba(0, 0, 0, 0.12) 0 2px 8px;
-  --shadow-deep: rgba(0, 0, 0, 0.22) 0 18px 54px;
+  --page: #141618;
+  --page-alt: #1b1e22;
+  --text: rgba(255, 255, 255, 0.96);
+  --text-soft: rgba(255, 255, 255, 0.74);
+  --text-faint: rgba(255, 255, 255, 0.52);
+  --card: #21252a;
+  --line: rgba(255, 255, 255, 0.16);
+  --line-strong: rgba(255, 255, 255, 0.26);
+  --blue: #3d9cff;
+  --blue-active: #78bcff;
+  --blue-soft: rgba(61, 156, 255, 0.18);
+  --blue-text: #82c1ff;
+  --green: #45c4be;
+  --orange: #ff8a42;
+  --shadow-card:
+    rgba(0, 0, 0, 0.34) 0 8px 24px,
+    rgba(0, 0, 0, 0.22) 0 2px 8px;
+  --shadow-deep: rgba(0, 0, 0, 0.42) 0 20px 58px;
 }
 
 * {
@@ -1081,8 +1088,8 @@ a {
 
 .crSection {
   display: grid;
-  grid-template-columns: minmax(230px, 0.6fr) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(230px, 0.52fr) minmax(0, 1.08fr);
+  gap: 14px;
   padding-top: 36px;
   padding-bottom: 20px;
 }
@@ -1108,6 +1115,11 @@ a {
     var(--card);
 }
 
+.crIntro .storyLabel {
+  justify-self: start;
+  width: fit-content;
+}
+
 .crIntro h2 {
   max-width: none;
   margin: 12px 0 8px;
@@ -1126,7 +1138,7 @@ a {
 .crCards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .crCard {
@@ -1136,7 +1148,7 @@ a {
   align-content: center;
   gap: 12px;
   min-height: 0;
-  padding: 12px 16px 16px;
+  padding: 12px 14px 16px;
   overflow: hidden;
 }
 
@@ -1150,8 +1162,8 @@ a {
 
 .crIdentity {
   display: grid;
-  grid-template-columns: 86px minmax(0, 1fr);
-  gap: 14px;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 12px;
   align-items: center;
   min-width: 0;
   color: inherit;
@@ -1212,9 +1224,31 @@ a {
   color: var(--blue-text);
 }
 
+:root[data-theme="dark"] .crIntro,
+:root[data-theme="dark"] .crCard,
+:root[data-theme="dark"] .commandCenter,
+:root[data-theme="dark"] .donorOverview article,
+:root[data-theme="dark"] .pulseMetrics article {
+  border-color: var(--line);
+}
+
+:root[data-theme="dark"] .crIntro {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--blue) 14%, transparent),
+      transparent 64%
+    ),
+    var(--card);
+}
+
+:root[data-theme="dark"] .crCard::before {
+  border-top-color: color-mix(in srgb, var(--blue) 72%, var(--line));
+}
+
 .crCard h3 {
   margin: 8px 0 3px;
-  font-size: 1.12rem;
+  font-size: 1.08rem;
   line-height: 1.15;
   letter-spacing: 0;
   white-space: nowrap;
@@ -1240,11 +1274,70 @@ a {
   justify-content: center;
   gap: 7px;
   min-height: 34px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--page-alt);
+  border: 1px solid color-mix(in srgb, var(--blue) 18%, var(--line));
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--blue) 7%, transparent),
+      transparent 68%
+    ),
+    var(--page-alt);
   color: var(--text);
   font-weight: 800;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.crActions a svg,
+.crActions button svg,
+.crActions span svg {
+  color: var(--blue-text);
+}
+
+.crActions a:hover,
+.crActions button:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--blue) 42%, var(--line));
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--blue) 13%, transparent),
+      transparent 74%
+    ),
+    var(--blue-soft);
+  color: var(--blue-active);
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--blue) 12%, transparent);
+}
+
+:root[data-theme="dark"] .crActions a,
+:root[data-theme="dark"] .crActions button,
+:root[data-theme="dark"] .crActions span {
+  border-color: color-mix(in srgb, var(--blue) 28%, var(--line));
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--blue) 14%, transparent),
+      transparent 72%
+    ),
+    color-mix(in srgb, var(--card) 76%, var(--page-alt));
+}
+
+:root[data-theme="dark"] .crActions a:hover,
+:root[data-theme="dark"] .crActions button:hover {
+  border-color: color-mix(in srgb, var(--blue) 54%, var(--line));
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--blue) 22%, transparent),
+      transparent 78%
+    ),
+    color-mix(in srgb, var(--blue-soft) 68%, var(--card));
+  color: var(--text);
 }
 
 .crActions button {
